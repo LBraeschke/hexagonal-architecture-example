@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
- import citizens from './exterior/adapters/citizens/index.js'
+ import citizens from './exterior/adapters/taxes/index.js'
 
 const app = new Hono()
 
