@@ -7,7 +7,7 @@ interface PlanetCitizensData {
   taxes: number;
 }
 
-api.get("/", (c) => {
+api.get("/", async (c) => {
   const planetId = c.req.param("id");
   console.log(`Fetching citizens for planet with ID: ${planetId}`);
 
