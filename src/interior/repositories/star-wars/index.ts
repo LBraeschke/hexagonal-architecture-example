@@ -1,3 +1,6 @@
+import { Inhabitant } from "../../../domain/models/taxpayers";
+import { IInhabitantRepository } from "../../../domain/ports/inhabitant-service";
+
 interface People {
   birth_year: string;
   eye_color: string;
@@ -17,4 +20,17 @@ const fetchPeople = async (): Promise<People[]> => {
   return data.results;
 };
 
-// ToDo: implement a driven adapter for the Star Wars API
+export class PeopleRepository implements IInhabitantRepository {
+  fetchInhabitants(planetId: string): Promise<Inhabitant[]> {
+    return fetchPeople().then((people) => {
+      return people
+        .filter((person) => person.homeworld.includes(`planets/${planetId}`))
+        .map((person) => ({
+          name: person.name,
+          isOrganic: !person.species.find((specie) =>
+            specie.includes("species/2")
+          ),
+        }));
+    });
+  }
+}

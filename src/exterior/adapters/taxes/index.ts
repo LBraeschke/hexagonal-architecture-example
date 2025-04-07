@@ -1,3 +1,4 @@
+import { censusService } from "@di";
 import { Hono } from "hono";
 
 const api = new Hono();
@@ -11,9 +12,20 @@ api.get("/", async (c) => {
   const planetId = c.req.param("id");
   console.log(`Fetching citizens for planet with ID: ${planetId}`);
 
-  //TODO: implement a driving adapter to get the citizens of a planet
+  if (!planetId) {
+    return c.json({ error: "Planet ID is required" }, 400);
+  }
 
-  return c.json({ taxpayers: 0, taxes: 0 } satisfies PlanetCitizensData);
+  const result = await censusService.enumerate(planetId);
+
+  return c.json({
+    taxpayers: result.taxpayers.filter((inhabitant) => inhabitant.taxes !== 0)
+      .length,
+    taxes: result.taxpayers.reduce(
+      (sum, inhabitant) => sum + inhabitant.taxes,
+      0
+    ),
+  } satisfies PlanetCitizensData);
 });
 
 export default api;
